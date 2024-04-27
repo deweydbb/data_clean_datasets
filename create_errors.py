@@ -15,8 +15,8 @@ def create_typos(dataset):
     myselector=List_selected()
     mygen=Error_Generator()
 
-    mymethod=Typo_Butterfingers(prob=0.05)
-    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=25,dataset=dataset,mute_column=[0, 1, 9])
+    mymethod=Typo_Butterfingers(prob=0.15)
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=45,dataset=dataset,mute_column=[0, 1, 9])
 
     Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_typos.csv", new_dataset)
 
@@ -24,11 +24,9 @@ def create_typos(dataset):
 def create_missing_data(dataset):
     myselector=List_selected()
     mygen=Error_Generator()
-    mymethod=Explicit_Missing_Value()
-
-    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=1.6,dataset=dataset,mute_column=[0])
 
     mymethod=Implicit_Missing_Value(dic={
+                "0":"",
                 "1":"null",
                 "2":"?",
                 "3":"NULL",
@@ -37,7 +35,7 @@ def create_missing_data(dataset):
                 "6":'N/A',
     })
 
-    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=8.4,dataset=new_dataset,mute_column=[0])
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=30,dataset=dataset,mute_column=[0])
 
     Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_missing.csv", new_dataset)
 
@@ -46,7 +44,7 @@ def create_outlier(dataset):
     mygen=Error_Generator()
 
     mymethod=Outlier_Integer()
-    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=10,dataset=dataset,mute_column=[0, 2, 3, 4, 5, 6, 7, 8, 10, 11])
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=30,dataset=dataset,mute_column=[0, 2, 3, 4, 5, 6, 7, 8, 10, 11])
 
     Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_outliers.csv", new_dataset)
 
@@ -55,7 +53,7 @@ def create_fn(dataset):
     mygen=Error_Generator()
 
     mymethod=Switch_Relationship()
-    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=10,dataset=dataset,mute_column=[0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11])
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=30,dataset=dataset,mute_column=[0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11])
 
     Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_fn.csv", new_dataset)
 
@@ -64,12 +62,12 @@ def create_domain(dataset):
     mygen=Error_Generator()
 
     mymethod=Random_Domain()
-    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=10,dataset=dataset,mute_column=[0])
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=30,dataset=dataset,mute_column=[0])
 
     Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_domain.csv", new_dataset)
 
-create_typos(dataset)
-create_missing_data(dataset)
-create_outlier(dataset)
-create_fn(dataset)
-create_domain(dataset)
+# create_typos(dataset)
+# create_missing_data(dataset)
+# create_outlier(dataset)
+# create_fn(dataset)
+# create_domain(dataset)
