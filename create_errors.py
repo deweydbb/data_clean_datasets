@@ -4,50 +4,72 @@ from error_generator import Typo_Butterfingers
 from error_generator import List_selected
 from error_generator import Error_Generator
 from error_generator import Read_Write
+from error_generator.strategies.switch_value.outlier_integer.outlier_integer import Outlier_Integer
+from error_generator.strategies.switch_value.switch_relationship.Switch_Relationship import Switch_Relationship
+from error_generator.strategies.switch_value.random_domain.Random_Domain import Random_Domain
 
 dataset,dataframe = Read_Write.read_csv_dataset("../datasets/adults/adults_clean.csv")
 
-myselector=List_selected()
-mygen=Error_Generator()
-mymethod=Implicit_Missing_Value(dic={
-                "phone number":"11111111",
-                "education":"Some college",
-                "Blood Pressurse":"0",
-                "workclass":"?",
-                "date":"20010101",
-                "Ref_ID":"-1",
-                "age":"0",
-                "Birthday":"20010101",
-                "EVENT_DT":"20030101",
-            })
 
-new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=5,dataset=dataset,mute_column=[0, 3, 10])
+def create_typos(dataset):
+    myselector=List_selected()
+    mygen=Error_Generator()
 
-mymethod=Implicit_Missing_Value(dic={
-                "city":"New York"
-            })
+    mymethod=Typo_Butterfingers(prob=0.05)
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=25,dataset=dataset,mute_column=[0, 1, 9])
 
-new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=0.5,dataset=new_dataset,mute_column=[0,1,2,3,4,5,6,7,8,9,11])
-
-mymethod=Implicit_Missing_Value(dic={
-                "city":"Alabama",
-            })
-
-new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=0.5,dataset=new_dataset,mute_column=[0,1,2,3,4,5,6,7,8,9,11])
+    Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_typos.csv", new_dataset)
 
 
-mymethod=Explicit_Missing_Value()
+def create_missing_data(dataset):
+    myselector=List_selected()
+    mygen=Error_Generator()
+    mymethod=Explicit_Missing_Value()
 
-new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=5,dataset=new_dataset,mute_column=[0])
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=1.6,dataset=dataset,mute_column=[0])
 
+    mymethod=Implicit_Missing_Value(dic={
+                "1":"null",
+                "2":"?",
+                "3":"NULL",
+                "4":"unknown",
+                "5":'""',
+                "6":'N/A',
+    })
 
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=8.4,dataset=new_dataset,mute_column=[0])
 
+    Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_missing.csv", new_dataset)
 
+def create_outlier(dataset):
+    myselector=List_selected()
+    mygen=Error_Generator()
 
+    mymethod=Outlier_Integer()
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=10,dataset=dataset,mute_column=[0, 2, 3, 4, 5, 6, 7, 8, 10, 11])
 
+    Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_outliers.csv", new_dataset)
 
-mymethod=Typo_Butterfingers(prob=0.03)
-new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=8,dataset=new_dataset,mute_column=[0])
+def create_fn(dataset):
+    myselector=List_selected()
+    mygen=Error_Generator()
 
+    mymethod=Switch_Relationship()
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=10,dataset=dataset,mute_column=[0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11])
 
-Read_Write.write_csv_dataset("../datasets/adults/dirty.csv".format(mymethod.name), new_dataset)
+    Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_fn.csv", new_dataset)
+
+def create_domain(dataset):
+    myselector=List_selected()
+    mygen=Error_Generator()
+
+    mymethod=Random_Domain()
+    new_dataset=mygen.error_generator(method_gen=mymethod,selector=myselector,percentage=10,dataset=dataset,mute_column=[0])
+
+    Read_Write.write_csv_dataset("../datasets/adults/adults_dirty_domain.csv", new_dataset)
+
+create_typos(dataset)
+create_missing_data(dataset)
+create_outlier(dataset)
+create_fn(dataset)
+create_domain(dataset)
